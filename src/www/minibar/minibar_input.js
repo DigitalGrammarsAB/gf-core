@@ -211,7 +211,6 @@ Input.prototype.add_typed_input=function() {
 	    var inp=empty("input","type","text");
 	    inp.value="";
 	    inp.setAttribute("accesskey","t");
-	    inp.style.width="10em";
 	    inp.onkeyup=bind(complete_typed,this);
 	    surface.appendChild(inp);
 	    surface.typed=inp;

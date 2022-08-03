@@ -18,7 +18,7 @@ var minibar_options= {
     word_replacements: true,
     default_source_language: "Eng",
     //feedback_url: "feedback.html",
-    try_google: true
+    try_google: false
 }
 
 if(window.preferred_grammars)
