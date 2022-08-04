@@ -211,6 +211,7 @@ Input.prototype.add_typed_input=function() {
 	    var inp=empty("input","type","text");
 	    inp.value="";
 	    inp.setAttribute("accesskey","t");
+	    inp.onkeydown=bind(start_typed,this);
 	    inp.onkeyup=bind(complete_typed,this);
 	    surface.appendChild(inp);
 	    surface.typed=inp;
@@ -237,6 +238,25 @@ Input.prototype.remove_typed_input=function() {
     }
 }
 
+Input.prototype.start_typed=function(event) {
+    with(this) {
+	var inp=surface.typed;
+	var s=inp.value;
+	if (s.length == 0 && event.keyCode==8 && current.input.length > 0) { // backspace
+	    var last = current.input.pop();
+	    local.put("current",current)
+	    if(surface.typed) {
+		surface.removeChild(surface.typed.previousSibling);
+		surface.typed.value = last;
+		surface.typed.focus();
+	    }
+	    translations.clear();
+	    get_completions();
+		return false;
+	}
+	}
+}
+
 Input.prototype.complete_typed=function(event) {
     with(this) {
 	//element("debug").innerHTML=show_props(event,"event");
@@ -247,7 +267,7 @@ Input.prototype.complete_typed=function(event) {
 	if(ws.length>1 || event.keyCode==13) {
 	    if(ws[0]!=words.filtered) filter_completions(ws[0],true);
 	    if(words.count==1) add_word(words.theword);
-	    else if(event.keyCode==13) add_word(ws[0]) // for literals
+	    else if(event.keyCode==13 && ws[0]!='') add_word(ws[0]) // for literals
 	    else if(elem(ws[0],words.completions)) add_word(ws[0]);
 	    else if(words.theword.length>ws[0].length) inp.value=words.theword;
 	}
@@ -284,6 +304,7 @@ Input.prototype.word=function(s) {
     function click_word() {
 	if(t.surface.typed) t.surface.typed.value="";
 	t.add_word(s);
+	t.surface.typed.focus();
     }
     return button(s,click_word);
 }
